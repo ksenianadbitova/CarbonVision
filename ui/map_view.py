@@ -11,30 +11,26 @@ def render_map(lat, lon, name, area_ha):
         control_scale=True,
     )
 
-    # Спутник Esri World Imagery
-    # attr непустой (требование Folium), но визуально скрываем через CSS
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/"
               "World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attr=" ",
+        attr=".",
         name="Спутник",
         overlay=False,
         control=True,
         max_zoom=19,
     ).add_to(m)
 
-    # Слой подписей
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/"
               "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-        attr=" ",
+        attr=".",
         name="Подписи",
         overlay=True,
         control=True,
         max_zoom=19,
     ).add_to(m)
 
-    # Маркер участка
     folium.Marker(
         [lat, lon],
         popup=f"<b>{name}</b><br>Площадь: {area_ha} га",
@@ -42,7 +38,6 @@ def render_map(lat, lon, name, area_ha):
         icon=folium.Icon(color="green", icon="tree", prefix="fa"),
     ).add_to(m)
 
-    # Контур участка
     folium.Circle(
         [lat, lon],
         radius=3000,
@@ -54,22 +49,32 @@ def render_map(lat, lon, name, area_ha):
         tooltip=f"{name} — {area_ha} га",
     ).add_to(m)
 
-    # Переключатель слоёв
     folium.LayerControl(collapsed=False).add_to(m)
 
-    st_folium(m, width=750, height=500, returned_objects=[])
-
-    # CSS: полностью скрываем атрибуцию Leaflet/Esri
-    st.markdown("""
-    <style>
-        .leaflet-control-attribution,
-        .leaflet-bottom.leaflet-right,
-        .leaflet-control-attribution * {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            width: 0 !important;
+    # === ВСТАВЛЯЕМ JS ВНУТРЬ КАРТЫ ===
+    # Он выполняется в контексте iframe, где живёт Leaflet,
+    # и физически удаляет плашку из DOM.
+    kill_attribution_js = """
+    <script>
+    (function() {
+        function killAttr() {
+            var map = document.querySelector('.folium-map');
+            if (!map || !map._leaflet_id) return;
+            // Удаляем все control-attribution из DOM
+            document.querySelectorAll(
+                '.leaflet-control-attribution, .leaflet-bottom.leaflet-right'
+            ).forEach(function(el) { el.remove(); });
         }
-    </style>
-    """, unsafe_allow_html=True)
+        // Пробуем несколько раз — Leaflet может грузиться асинхронно
+        for (var i = 0; i < 30; i++) {
+            setTimeout(killAttr, i * 100);
+        }
+        // И разово — через MutationObserver (если что-то добавится заново)
+        var obs = new MutationObserver(killAttr);
+        obs.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
+    """
+    m.get_root().html.add_child(folium.Element(kill_attribution_js))
+
+    st_folium(m, width=750, height=500, returned_objects=[])
