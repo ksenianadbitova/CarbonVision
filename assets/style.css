@@ -1,0 +1,413 @@
+﻿/* ================= CarbonVision Theme ================= */
+
+/* Общий фон основного контента */
+.stApp {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    color: #e8f5e9;
+}
+
+/* ============================================================
+   САЙДБАР — светлый фон, ТЁМНЫЙ текст
+   ============================================================ */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #d8f3dc 0%, #b7e4c7 100%);
+    border-right: 1px solid #52b788;
+}
+
+/* Всё в сайдбаре — тёмное */
+section[data-testid="stSidebar"],
+section[data-testid="stSidebar"] *,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] div,
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] h4 {
+    color: #081c15 !important;
+}
+
+/* Заголовок CarbonVision */
+section[data-testid="stSidebar"] h1 {
+    color: #1b4332 !important;
+    font-weight: 800 !important;
+}
+
+/* Selectbox — белый фон, тёмный текст */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+    background: #ffffff !important;
+    border: 1px solid #52b788 !important;
+    border-radius: 10px !important;
+}
+section[data-testid="stSidebar"] div[data-baseweb="select"] * {
+    color: #081c15 !important;
+    font-weight: 600 !important;
+}
+
+/* Выпадающий список (когда открыт) */
+div[data-baseweb="popover"] *,
+ul[role="listbox"] *,
+li[role="option"] * {
+    color: #081c15 !important;
+    background: #ffffff !important;
+}
+li[role="option"]:hover * {
+    background: #d8f3dc !important;
+}
+
+/* Слайдер — цифры и подписи тёмные */
+section[data-testid="stSidebar"] .stSlider * {
+    color: #081c15 !important;
+    font-weight: 600 !important;
+}
+section[data-testid="stSidebar"] .stSlider [data-baseweb="slider"] div {
+    color: #081c15 !important;
+}
+
+/* Кнопка Анализировать */
+section[data-testid="stSidebar"] .stButton > button {
+    background: linear-gradient(90deg, #2d6a4f, #40916c);
+    color: #ffffff !important;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    padding: 0.6rem 1rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+section[data-testid="stSidebar"] .stButton > button * {
+    color: #ffffff !important;
+}
+section[data-testid="stSidebar"] .stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(45, 106, 79, 0.5);
+}
+
+/* ============================================================
+   ОСНОВНОЙ КОНТЕНТ — тёмный фон, СВЕТЛЫЙ текст
+   ============================================================ */
+h1, h2, h3, h4 {
+    color: #d8f3dc !important;
+    letter-spacing: 0.5px;
+}
+h1 {
+    background: linear-gradient(90deg, #95d5b2, #52b788, #b7e4c7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+/* Обычный текст и параграфы */
+.stApp p, .stApp span, .stApp label,
+.stApp li, .stApp div[data-testid="stMarkdownContainer"] {
+    color: #e8f5e9;
+}
+
+/* Метрики */
+div[data-testid="stMetric"] {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(149, 213, 178, 0.25);
+    border-radius: 16px;
+    padding: 1rem 1.2rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+div[data-testid="stMetric"]:hover {
+    transform: translateY(-3px);
+    border-color: #95d5b2;
+}
+div[data-testid="stMetricValue"] {
+    color: #b7e4c7 !important;
+    font-weight: 700;
+}
+div[data-testid="stMetricLabel"] {
+    color: #95d5b2 !important;
+    font-weight: 500;
+}
+
+/* Таблицы */
+div[data-testid="stDataFrame"] {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(149, 213, 178, 0.25);
+}
+div[data-testid="stDataFrame"] * {
+    color: #081c15 !important;
+}
+
+/* Кнопка скачивания */
+.stDownloadButton > button {
+    background: linear-gradient(90deg, #52b788, #95d5b2);
+    color: #081c15 !important;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.stDownloadButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(82, 183, 136, 0.5);
+}
+
+/* Разделители */
+hr {
+    border-color: rgba(149, 213, 178, 0.25);
+}
+
+/* Уведомления */
+.stAlert {
+    border-radius: 14px;
+    border-left: 5px solid #52b788;
+    color: #081c15 !important;
+}
+.stAlert * {
+    color: #081c15 !important;
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #0f2027;
+}
+::-webkit-scrollbar-thumb {
+    background: #52b788;
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #95d5b2;
+}
+
+/* ================= Дополнительные украшения ================= */
+
+.gradient-divider {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #52b788, #95d5b2,
+                                #52b788, transparent);
+    border: none;
+    margin: 1.5rem 0;
+    border-radius: 2px;
+}
+
+.hero-banner {
+    background: linear-gradient(135deg,
+                rgba(82,183,136,0.15) 0%,
+                rgba(149,213,178,0.08) 50%,
+                rgba(82,183,136,0.15) 100%);
+    border: 1px solid rgba(149,213,178,0.3);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(12px);
+    text-align: center;
+}
+.hero-banner h1 {
+    font-size: 2.6rem;
+    margin: 0 0 0.4rem 0;
+    background: linear-gradient(90deg, #95d5b2, #52b788, #b7e4c7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+.hero-banner p {
+    color: #b7e4c7 !important;
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.info-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(149,213,178,0.3);
+    border-radius: 16px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 0.7rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+.info-card:hover {
+    transform: translateY(-3px);
+    border-color: #95d5b2;
+    box-shadow: 0 8px 24px rgba(82,183,136,0.25);
+}
+.info-card .label {
+    color: #95d5b2 !important;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 0.3rem 0;
+}
+.info-card .value {
+    color: #e8f5e9 !important;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #52b788;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 0 0 rgba(82,183,136,0.7);
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(82,183,136,0.7); }
+    70%  { box-shadow: 0 0 0 12px rgba(82,183,136,0); }
+    100% { box-shadow: 0 0 0 0 rgba(82,183,136,0); }
+}
+
+.status-bar {
+    background: rgba(82,183,136,0.1);
+    border: 1px solid rgba(149,213,178,0.3);
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem;
+    display: inline-block;
+    color: #b7e4c7 !important;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(149,213,178,0.2);
+    color: #b7e4c7 !important;
+    border: 1px solid rgba(149,213,178,0.4);
+    margin-right: 0.4rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #d8f3dc !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1.5rem 0 1rem 0;
+}
+.section-title .icon {
+    font-size: 1.6rem;
+}
+/* ============================================================
+   РУСИФИКАЦИЯ ИНТЕРФЕЙСА STREAMLIT
+   ============================================================ */
+
+/* --- Прячем кнопку Deploy (не нужна локально) --- */
+[data-testid="stAppDeployButton"] {
+    display: none !important;
+}
+
+/* --- Меню ⋮ (три точки) — переводим пункты на русский --- */
+
+/* Скрываем английские подписи */
+[data-testid="stMainMenu"] ul li a span,
+[data-testid="stMainMenu"] ul li span,
+[data-testid="stMainMenuList"] a span {
+    visibility: hidden;
+    position: relative;
+}
+
+/* Заменяем тексты — каждый пункт по его позиции */
+
+/* 1. Rerun → Перезапустить */
+[data-testid="stMainMenuList"] li:nth-child(1) a span::before,
+[data-testid="stMainMenu"] ul li:nth-child(1) span::before {
+    content: "🔄 Перезапустить";
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    color: #081c15;
+}
+
+/* 2. Settings → Настройки */
+[data-testid="stMainMenuList"] li:nth-child(2) a span::before,
+[data-testid="stMainMenu"] ul li:nth-child(2) span::before {
+    content: "⚙️ Настройки";
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    color: #081c15;
+}
+
+/* 3. Print → Печать */
+[data-testid="stMainMenuList"] li:nth-child(3) a span::before,
+[data-testid="stMainMenu"] ul li:nth-child(3) span::before {
+    content: "🖨️ Печать";
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    color: #081c15;
+}
+
+/* 4. Record a screencast → Записать экран */
+[data-testid="stMainMenuList"] li:nth-child(4) a span::before,
+[data-testid="stMainMenu"] ul li:nth-child(4) span::before {
+    content: "🎥 Записать экран";
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    color: #081c15;
+}
+
+/* 5. About → О программе */
+[data-testid="stMainMenuList"] li:nth-child(5) a span::before,
+[data-testid="stMainMenu"] ul li:nth-child(5) span::before {
+    content: "ℹ️ О программе";
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    color: #081c15;
+}
+
+/* --- Фон меню — светлый --- */
+[data-testid="stMainMenuList"],
+ul[data-testid="stMainMenuList"] {
+    background: #ffffff !important;
+    border-radius: 10px !important;
+    border: 1px solid #52b788 !important;
+}
+[data-testid="stMainMenuList"] li:hover {
+    background: #d8f3dc !important;
+}
+
+/* --- Переводим текст «Made with Streamlit» в футере --- */
+footer {
+    visibility: hidden;
+}
+footer::before {
+    content: "Сделано на Streamlit • CarbonVision";
+    visibility: visible;
+    display: block;
+    text-align: center;
+    color: #95d5b2;
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+}
