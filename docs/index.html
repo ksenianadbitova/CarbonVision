@@ -1,28 +1,32 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarbonVision — верификация углеродных кредитов</title>
-    <meta name="description" content="Программа для оценки запасов углерода в лесах и расчёта потенциальных углеродных единиц по спутниковым данным.">
+    <title>CarbonVision — верификация углеродных кредитов в лесах России 🇷🇺</title>
+    <meta name="description" content="Программа для оценки запасов углерода в лесах России и расчёта потенциальных углеродных единиц по спутниковым данным.">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇷🇺</text></svg>">
 </head>
 <body>
 
 <!-- ============ HERO ============ -->
 <header class="hero">
+    <div style="font-size: 4rem; line-height: 1; margin-bottom: 0.5rem;">🇷🇺</div>
     <h1>🌍 CarbonVision</h1>
     <p class="subtitle">
         Верификация «зелёных» инвестиций и углеродных кредитов
+        <b>в лесах Российской Федерации</b>
         по спутниковым данным ESA CCI Biomass, Sentinel-2, GFC и MODIS
     </p>
 
     <div class="badges">
+        <span class="badge">🇷🇺 Россия</span>
+        <span class="badge">🌲 Российская тайга</span>
         <span class="badge">🛰️ ESA CCI Biomass</span>
-        <span class="badge">🌲 Sentinel-2</span>
+        <span class="badge">🌳 Sentinel-2</span>
         <span class="badge">🔥 MODIS</span>
-        <span class="badge">🌳 GFC</span>
+        <span class="badge">🌿 GFC</span>
     </div>
 
     <div class="cta">
@@ -44,9 +48,14 @@
     </h2>
     <div class="grid">
         <div class="card">
+            <span class="card-icon">🇷🇺</span>
+            <h3>Леса России</h3>
+            <p>Анализ шести лесных участков: Архангельская и Вологодская области, Республика Мордовия, Красноярский край, Свердловская область.</p>
+        </div>
+        <div class="card">
             <span class="card-icon">🛰️</span>
             <h3>Спутниковые данные</h3>
-            <p>Анализ биомассы ESA CCI, снимков Sentinel-2, потерь древесного покрова GFC и продукта гарей MODIS.</p>
+            <p>Биомасса ESA CCI, снимки Sentinel-2, потери древесного покрова GFC и продукт гарей MODIS.</p>
         </div>
         <div class="card">
             <span class="card-icon">📊</span>
@@ -68,10 +77,50 @@
             <h3>Доход по трём сценариям</h3>
             <p>Пессимистичный, базовый и оптимистичный прогноз дохода от продажи углеродных единиц.</p>
         </div>
+    </div>
+</section>
+
+<!-- ============ РОССИЙСКИЕ УЧАСТКИ ============ -->
+<section>
+    <h2 class="section-title">
+        <span class="icon">🗺️</span> Лесные участки России
+    </h2>
+    <div class="grid">
         <div class="card">
-            <span class="card-icon">🗺️</span>
-            <h3>Карта и динамика</h3>
-            <p>Спутниковая карта участка, график изменения углерода по годам, события (пожары, потери).</p>
+            <span class="card-icon">🌲</span>
+            <h3>Северная тайга</h3>
+            <p>Архангельская область</p>
+            <p><b>1750.47 га</b></p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🌳</span>
+            <h3>Вологодские леса</h3>
+            <p>Вологодская область</p>
+            <p><b>1617.71 га</b></p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🔥</span>
+            <h3>Мордовский гарь №1</h3>
+            <p>Республика Мордовия</p>
+            <p><b>1829.60 га</b></p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🔥</span>
+            <h3>Мордовский гарь №2</h3>
+            <p>Республика Мордовия</p>
+            <p><b>1832.75 га</b></p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🌲</span>
+            <h3>Сибирская тайга</h3>
+            <p>Красноярский край</p>
+            <p><b>2100.00 га</b></p>
+        </div>
+        <div class="card">
+            <span class="card-icon">⛰️</span>
+            <h3>Уральские леса</h3>
+            <p>Свердловская область</p>
+            <p><b>1950.00 га</b></p>
         </div>
     </div>
 </section>
@@ -134,7 +183,7 @@ pip install -r requirements.txt</div>
             <div class="step-num">6</div>
             <div class="step-content">
                 <h4>Готово! 🎉</h4>
-                <p>Выбери локацию, период и нажми <b>«Анализировать»</b> — увидишь карту, графики, расчёт единиц и доход.</p>
+                <p>Выбери российский участок, период и нажми <b>«Анализировать»</b> — увидишь карту, графики, расчёт единиц и доход.</p>
             </div>
         </div>
     </div>
@@ -153,7 +202,7 @@ pip install -r requirements.txt</div>
 
 <!-- ============ ФУТЕР ============ -->
 <footer>
-    🌱 CarbonVision • КосмоХакатон 2026 • Сделано с ❤️ для планеты
+    🇷🇺 CarbonVision • Леса России • КосмоХакатон 2026 • Сделано с ❤️ для планеты
 </footer>
 
 <script src="app.js"></script>

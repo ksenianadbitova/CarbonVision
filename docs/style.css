@@ -272,3 +272,27 @@ footer {
     section { padding: 2rem 1.2rem; }
     .step { flex-direction: row; }
 }
+/* ================= Российский акцент ================= */
+
+.hero::before {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg,
+                #ffffff 0%, #ffffff 33%,
+                #0039a6 33%, #0039a6 66%,
+                #d52b1e 66%, #d52b1e 100%);
+    margin: 0 auto 1.5rem;
+    border-radius: 2px;
+}
+
+.hero h1 {
+    font-size: 3.8rem;
+}
+
+footer {
+    background: rgba(213,43,30,0.05);
+    border-top: 1px solid rgba(213,43,30,0.2);
+    color: #ffd6cf;
+}

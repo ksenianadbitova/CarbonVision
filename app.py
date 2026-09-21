@@ -44,8 +44,18 @@ if locations is None or locations.empty:
     st.stop()
 
 # ---------- Сайдбар ----------
-st.sidebar.title("🌍 CarbonVision")
-st.sidebar.caption("Верификация углеродных кредитов")
+st.sidebar.markdown("""
+<div style="text-align:center; padding: 0.5rem 0 1rem 0;">
+    <div style="font-size: 2rem; line-height: 1;">🇷🇺</div>
+    <h2 style="margin: 0.3rem 0 0.2rem 0; color: #1b4332; font-weight: 800;">
+        CarbonVision
+    </h2>
+    <p style="color: #1b4332; font-size: 0.85rem; margin: 0;">
+        Верификация углеродных кредитов<br>
+        <b>Леса России</b>
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 aoi_options = {row["name"]: row for _, row in locations.iterrows()}
 aoi_name = st.sidebar.selectbox("Локация", list(aoi_options.keys()))
@@ -60,8 +70,9 @@ run = st.sidebar.button("🚀 Анализировать", type="primary")
 st.markdown("""
 <div class="hero-banner fade-in">
     <h1>🌍 CarbonVision</h1>
-    <p>Верификация «зелёных» инвестиций и углеродных кредитов</p>
+    <p>🇷🇺 Верификация «зелёных» инвестиций и углеродных кредитов в лесах России</p>
     <div style="margin-top: 0.8rem;">
+        <span class="badge">🇷🇺 Россия</span>
         <span class="badge">🛰️ ESA CCI Biomass</span>
         <span class="badge">🌲 Sentinel-2</span>
         <span class="badge">🔥 MODIS</span>
@@ -72,7 +83,7 @@ st.markdown("""
 <div style="text-align: center; margin-bottom: 1.5rem;">
     <div class="status-bar">
         <span class="status-dot"></span>
-        Система активна • Данные загружены
+        🇷🇺 Система активна • Данные по лесам России загружены
     </div>
 </div>
 """, unsafe_allow_html=True)
