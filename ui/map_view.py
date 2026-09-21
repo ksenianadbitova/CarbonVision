@@ -9,31 +9,32 @@ def render_map(lat, lon, name, area_ha):
         zoom_start=12,
         tiles=None,
         control_scale=True,
-        attribution_control=False,
     )
 
-    # Спутник Esri World Imagery — без атрибуции
+    # Спутник Esri World Imagery
+    # attr непустой (требование Folium), но визуально скрываем через CSS
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/"
               "World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attr="",
+        attr=" ",
         name="Спутник",
         overlay=False,
         control=True,
         max_zoom=19,
     ).add_to(m)
 
-    # Слой подписей — без атрибуции
+    # Слой подписей
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/"
               "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-        attr="",
+        attr=" ",
         name="Подписи",
         overlay=True,
         control=True,
         max_zoom=19,
     ).add_to(m)
 
+    # Маркер участка
     folium.Marker(
         [lat, lon],
         popup=f"<b>{name}</b><br>Площадь: {area_ha} га",
@@ -41,6 +42,7 @@ def render_map(lat, lon, name, area_ha):
         icon=folium.Icon(color="green", icon="tree", prefix="fa"),
     ).add_to(m)
 
+    # Контур участка
     folium.Circle(
         [lat, lon],
         radius=3000,
@@ -52,18 +54,22 @@ def render_map(lat, lon, name, area_ha):
         tooltip=f"{name} — {area_ha} га",
     ).add_to(m)
 
+    # Переключатель слоёв
     folium.LayerControl(collapsed=False).add_to(m)
 
     st_folium(m, width=750, height=500, returned_objects=[])
 
-    # CSS: полностью прячем атрибуцию Leaflet/Esri
+    # CSS: полностью скрываем атрибуцию Leaflet/Esri
     st.markdown("""
     <style>
-        .leaflet-control-attribution {
+        .leaflet-control-attribution,
+        .leaflet-bottom.leaflet-right,
+        .leaflet-control-attribution * {
             display: none !important;
-        }
-        .leaflet-bottom.leaflet-right {
-            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
         }
     </style>
     """, unsafe_allow_html=True)
