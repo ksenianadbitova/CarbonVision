@@ -1,0 +1,274 @@
+﻿/* ================= CarbonVision Landing Page ================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    min-height: 100vh;
+    color: #e8f5e9;
+    line-height: 1.6;
+}
+
+/* ---------- Хиро-секция ---------- */
+.hero {
+    text-align: center;
+    padding: 5rem 2rem 3rem;
+    background: radial-gradient(circle at 50% 0%,
+                rgba(82,183,136,0.15) 0%, transparent 60%);
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #95d5b2, #52b788, #b7e4c7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.hero .subtitle {
+    font-size: 1.25rem;
+    color: #95d5b2;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 1.5rem 0 2.5rem;
+}
+
+.badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    background: rgba(149,213,178,0.15);
+    color: #b7e4c7;
+    border: 1px solid rgba(149,213,178,0.4);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ---------- Кнопки ---------- */
+.cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #52b788, #95d5b2);
+    color: #081c15;
+    box-shadow: 0 4px 14px rgba(82,183,136,0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(82,183,136,0.6);
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: #b7e4c7;
+    border: 1px solid rgba(149,213,178,0.4);
+}
+
+.btn-secondary:hover {
+    background: rgba(149,213,178,0.15);
+    transform: translateY(-3px);
+}
+
+/* ---------- Секции ---------- */
+section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #d8f3dc;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-title .icon {
+    margin-right: 0.5rem;
+}
+
+/* ---------- Сетка карточек ---------- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(149,213,178,0.25);
+    border-radius: 16px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #95d5b2;
+    box-shadow: 0 12px 30px rgba(82,183,136,0.25);
+}
+
+.card .card-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
+.card h3 {
+    color: #b7e4c7;
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+}
+
+.card p {
+    color: #cfe9d6;
+    font-size: 0.95rem;
+}
+
+/* ---------- Инструкция ---------- */
+.steps {
+    display: grid;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(149,213,178,0.2);
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    transition: border-color 0.2s ease;
+}
+
+.step:hover {
+    border-color: #95d5b2;
+}
+
+.step-num {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #52b788, #95d5b2);
+    color: #081c15;
+    font-weight: 800;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(82,183,136,0.4);
+}
+
+.step-content h4 {
+    color: #d8f3dc;
+    margin-bottom: 0.4rem;
+    font-size: 1.05rem;
+}
+
+.step-content p {
+    color: #cfe9d6;
+    font-size: 0.92rem;
+    margin: 0.2rem 0;
+}
+
+code {
+    background: rgba(0,0,0,0.4);
+    color: #95d5b2;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 0.88rem;
+    border: 1px solid rgba(149,213,178,0.2);
+}
+
+.code-block {
+    background: rgba(0,0,0,0.5);
+    color: #b7e4c7;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 0.88rem;
+    margin: 0.5rem 0;
+    border-left: 4px solid #52b788;
+    overflow-x: auto;
+}
+
+/* ---------- Контакт ---------- */
+.contact {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(82,183,136,0.06);
+    border-top: 1px solid rgba(149,213,178,0.2);
+    margin-top: 3rem;
+}
+
+.contact a {
+    color: #95d5b2;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px dashed #52b788;
+    transition: color 0.2s ease;
+}
+
+.contact a:hover {
+    color: #b7e4c7;
+}
+
+/* ---------- Футер ---------- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #95d5b2;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(149,213,178,0.15);
+}
+
+/* ---------- Мобильная адаптация ---------- */
+@media (max-width: 640px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero .subtitle { font-size: 1rem; }
+    .section-title { font-size: 1.5rem; }
+    section { padding: 2rem 1.2rem; }
+    .step { flex-direction: row; }
+}

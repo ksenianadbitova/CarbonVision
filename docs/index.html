@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarbonVision — верификация углеродных кредитов</title>
+    <meta name="description" content="Программа для оценки запасов углерода в лесах и расчёта потенциальных углеродных единиц по спутниковым данным.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+    <h1>🌍 CarbonVision</h1>
+    <p class="subtitle">
+        Верификация «зелёных» инвестиций и углеродных кредитов
+        по спутниковым данным ESA CCI Biomass, Sentinel-2, GFC и MODIS
+    </p>
+
+    <div class="badges">
+        <span class="badge">🛰️ ESA CCI Biomass</span>
+        <span class="badge">🌲 Sentinel-2</span>
+        <span class="badge">🔥 MODIS</span>
+        <span class="badge">🌳 GFC</span>
+    </div>
+
+    <div class="cta">
+        <a href="https://carbonvision-ksenianadbitova.streamlit.app"
+           class="btn btn-primary" target="_blank" rel="noopener">
+            🚀 Открыть приложение
+        </a>
+        <a href="https://github.com/ksenianadbitova/CarbonVision"
+           class="btn btn-secondary" target="_blank" rel="noopener">
+            📦 Исходный код на GitHub
+        </a>
+    </div>
+</header>
+
+<!-- ============ О ПРОЕКТЕ ============ -->
+<section>
+    <h2 class="section-title">
+        <span class="icon">🎯</span> О проекте
+    </h2>
+    <div class="grid">
+        <div class="card">
+            <span class="card-icon">🛰️</span>
+            <h3>Спутниковые данные</h3>
+            <p>Анализ биомассы ESA CCI, снимков Sentinel-2, потерь древесного покрова GFC и продукта гарей MODIS.</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">📊</span>
+            <h3>Расчёт запаса углерода</h3>
+            <p>Метод разности запасов с переводом биомассы в углерод (CF = 0.47) и в CO₂-эквивалент (44/12).</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">📉</span>
+            <h3>Оценка неопределённости</h3>
+            <p>Сценарный диапазон результата, границы L и U, учёт ошибок входных данных.</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🌱</span>
+            <h3>Углеродные единицы</h3>
+            <p>Сравнение с базовой линией, вычет за неопределённость и резерв, расчёт Q потенциальных единиц.</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">💰</span>
+            <h3>Доход по трём сценариям</h3>
+            <p>Пессимистичный, базовый и оптимистичный прогноз дохода от продажи углеродных единиц.</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🗺️</span>
+            <h3>Карта и динамика</h3>
+            <p>Спутниковая карта участка, график изменения углерода по годам, события (пожары, потери).</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ КАК ЗАПУСТИТЬ ============ -->
+<section>
+    <h2 class="section-title">
+        <span class="icon">🚀</span> Как запустить локально
+    </h2>
+
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+                <h4>Открой PowerShell от имени администратора</h4>
+                <p>Нажми <code>Win + X</code> и выбери <b>«Терминал (Администратор)»</b>.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+                <h4>Скачай ZIP и распакуй</h4>
+                <p>На странице GitHub нажми <b>Code → Download ZIP</b> и распакуй в удобную папку.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+                <h4>Перейди в папку проекта</h4>
+                <p>Скопируй путь через проводник (правой кнопкой по адресной строке → «Копировать адрес как текст») и выполни:</p>
+                <div class="code-block">cd "путь к распакованной папке"</div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+                <h4>Активируй виртуальное окружение</h4>
+                <div class="code-block">.\venv\Scripts\Activate.ps1</div>
+                <p>В начале строки появится <code>(venv)</code> — значит всё работает.</p>
+                <p><b>Если venv отсутствует</b> — создай вручную:</p>
+                <div class="code-block">python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt</div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+                <h4>Запусти программу</h4>
+                <div class="code-block">streamlit run app.py</div>
+                <p>Через 2–3 секунды откроется браузер на <code>http://localhost:8501</code>.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+                <h4>Готово! 🎉</h4>
+                <p>Выбери локацию, период и нажми <b>«Анализировать»</b> — увидишь карту, графики, расчёт единиц и доход.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ КОНТАКТ ============ -->
+<section class="contact">
+    <h2 class="section-title">
+        <span class="icon">📬</span> Связь с разработчиком
+    </h2>
+    <p>Вопросы, баги, предложения — пишите:</p>
+    <p style="margin-top: 1rem; font-size: 1.15rem;">
+        📧 <a href="mailto:ksenianadbitova2008@yandex.ru">ksenianadbitova2008@yandex.ru</a>
+    </p>
+</section>
+
+<!-- ============ ФУТЕР ============ -->
+<footer>
+    🌱 CarbonVision • КосмоХакатон 2026 • Сделано с ❤️ для планеты
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
