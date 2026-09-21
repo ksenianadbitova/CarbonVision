@@ -1,6 +1,6 @@
 import folium
-from streamlit_folium import st_folium
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 def render_map(lat, lon, name, area_ha):
@@ -14,7 +14,7 @@ def render_map(lat, lon, name, area_ha):
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/"
               "World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        attr=".",
+        attr="©",
         name="Спутник",
         overlay=False,
         control=True,
@@ -24,7 +24,7 @@ def render_map(lat, lon, name, area_ha):
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/"
               "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-        attr=".",
+        attr="©",
         name="Подписи",
         overlay=True,
         control=True,
@@ -51,30 +51,39 @@ def render_map(lat, lon, name, area_ha):
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # === ВСТАВЛЯЕМ JS ВНУТРЬ КАРТЫ ===
-    # Он выполняется в контексте iframe, где живёт Leaflet,
-    # и физически удаляет плашку из DOM.
-    kill_attribution_js = """
+    # Получаем HTML-строку карты
+    map_html = m.get_root().render()
+
+    # CSS вставляем ПЕРЕД </head>, JS — ПЕРЕД </body>
+    css_injection = """
+    <style>
+        .leaflet-control-attribution,
+        .leaflet-bottom.leaflet-right,
+        .leaflet-control-attribution * {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+    """
+    map_html = map_html.replace("</head>", css_injection + "</head>")
+
+    js_injection = """
     <script>
     (function() {
-        function killAttr() {
-            var map = document.querySelector('.folium-map');
-            if (!map || !map._leaflet_id) return;
-            // Удаляем все control-attribution из DOM
+        function kill() {
             document.querySelectorAll(
                 '.leaflet-control-attribution, .leaflet-bottom.leaflet-right'
             ).forEach(function(el) { el.remove(); });
         }
-        // Пробуем несколько раз — Leaflet может грузиться асинхронно
-        for (var i = 0; i < 30; i++) {
-            setTimeout(killAttr, i * 100);
-        }
-        // И разово — через MutationObserver (если что-то добавится заново)
-        var obs = new MutationObserver(killAttr);
-        obs.observe(document.body, { childList: true, subtree: true });
+        setInterval(kill, 250);
     })();
     </script>
     """
-    m.get_root().html.add_child(folium.Element(kill_attribution_js))
+    map_html = map_html.replace("</body>", js_injection + "</body>")
 
-    st_folium(m, width=750, height=500, returned_objects=[])
+    # Рендерим карту напрямую через components.html
+    components.html(map_html, height=520, scrolling=False)
