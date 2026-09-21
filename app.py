@@ -46,7 +46,6 @@ if locations is None or locations.empty:
 # ---------- Сайдбар ----------
 st.sidebar.markdown("""
 <div style="text-align:center; padding: 0.5rem 0 1rem 0;">
-    <div style="font-size: 2rem; line-height: 1;">🇷🇺</div>
     <h2 style="margin: 0.3rem 0 0.2rem 0; color: #1b4332; font-weight: 800;">
         CarbonVision
     </h2>
@@ -70,9 +69,8 @@ run = st.sidebar.button("🚀 Анализировать", type="primary")
 st.markdown("""
 <div class="hero-banner fade-in">
     <h1>🌍 CarbonVision</h1>
-    <p>🇷🇺 Верификация «зелёных» инвестиций и углеродных кредитов в лесах России</p>
+    <p>Верификация «зелёных» инвестиций и углеродных кредитов в лесах России</p>
     <div style="margin-top: 0.8rem;">
-        <span class="badge">🇷🇺 Россия</span>
         <span class="badge">🛰️ ESA CCI Biomass</span>
         <span class="badge">🌲 Sentinel-2</span>
         <span class="badge">🔥 MODIS</span>
@@ -83,7 +81,7 @@ st.markdown("""
 <div style="text-align: center; margin-bottom: 1.5rem;">
     <div class="status-bar">
         <span class="status-dot"></span>
-        🇷🇺 Система активна • Данные по лесам России загружены
+        Система активна • Данные по лесам России загружены
     </div>
 </div>
 """, unsafe_allow_html=True)
