@@ -30,14 +30,12 @@ def load_locations():
         if col not in df.columns:
             return None, f"В areas.csv нет обязательной колонки: {col}"
 
-    # Проверяем, что все координаты числовые
     for col in ["area_ha", "bbox_west", "bbox_south", "bbox_east", "bbox_north"]:
         try:
             df[col] = pd.to_numeric(df[col], errors="raise")
         except Exception:
             return None, f"Колонка {col} содержит нечисловые значения"
 
-    # Считаем центр bbox — для отображения на карте
     df["lat"] = (df["bbox_south"] + df["bbox_north"]) / 2
     df["lon"] = (df["bbox_west"] + df["bbox_east"]) / 2
 
