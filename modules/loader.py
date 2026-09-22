@@ -19,11 +19,29 @@ def safe_load_csv(filename: str):
 
 
 def load_locations():
-    return safe_load_csv("locations.csv")
+    """Загрузка участков из areas.csv."""
+    df, err = safe_load_csv("areas.csv")
+    if err:
+        return None, err
 
+    required = ["aoi_id", "name", "region", "area_ha",
+                "bbox_west", "bbox_south", "bbox_east", "bbox_north"]
+    for col in required:
+        if col not in df.columns:
+            return None, f"В areas.csv нет обязательной колонки: {col}"
 
-def load_biomass():
-    return safe_load_csv("biomass_2019_2024.csv")
+    # Проверяем, что все координаты числовые
+    for col in ["area_ha", "bbox_west", "bbox_south", "bbox_east", "bbox_north"]:
+        try:
+            df[col] = pd.to_numeric(df[col], errors="raise")
+        except Exception:
+            return None, f"Колонка {col} содержит нечисловые значения"
+
+    # Считаем центр bbox — для отображения на карте
+    df["lat"] = (df["bbox_south"] + df["bbox_north"]) / 2
+    df["lon"] = (df["bbox_west"] + df["bbox_east"]) / 2
+
+    return df, None
 
 
 def load_baseline():
@@ -34,7 +52,10 @@ def load_parameters():
     df, err = safe_load_csv("parameters.csv")
     if err:
         return None, err
-    params = dict(zip(df["parameter"], df["value"]))
+    try:
+        params = dict(zip(df["parameter"], df["value"]))
+    except Exception as e:
+        return None, f"Не удалось собрать параметры: {e}"
     return params, None
 
 

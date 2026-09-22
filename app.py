@@ -1,9 +1,9 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-from modules.loader import (load_locations, load_biomass,
-                            load_baseline, load_parameters, load_events)
+from modules.loader import (load_locations, load_baseline,
+                            load_parameters, load_events)
 from modules.carbon_calc import compute_carbon, delta_c_to_co2
 from modules.uncertainty import scenario_uncertainty
 from modules.credits_calc import compute_credits
@@ -11,263 +11,248 @@ from ui.map_view import render_map
 from ui.charts import biomass_chart
 from ui.money_view import render_money
 
-# ---------- Настройка страницы ----------
 st.set_page_config(
-    page_title="CarbonVision",
-    page_icon="🌍",
+    page_title="Углеродные единицы",
+    page_icon="🌱",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
-# ---------- Подключение CSS ----------
+# ---------- CSS ----------
 css_path = Path(__file__).parent / "assets" / "style.css"
 if css_path.exists():
     st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>",
                 unsafe_allow_html=True)
 
-# ---------- Загрузка данных с защитой ----------
+# ---------- Загрузка данных ----------
 locations, err1 = load_locations()
-biomass, err2 = load_biomass()
-baseline, err3 = load_baseline()
-prices, err4 = load_parameters()
-events, err5 = load_events()
+baseline, err2 = load_baseline()
+prices, err3 = load_parameters()
+events, err4 = load_events()
 
-errors = [e for e in [err1, err2, err3, err4, err5] if e]
+errors = [e for e in [err1, err2, err3, err4] if e]
 if errors:
     st.error("Не удалось загрузить данные:")
     for e in errors:
         st.write("—", e)
     st.stop()
 
-if locations is None or locations.empty:
-    st.error("Файл локаций пуст. Проверьте data/locations.csv")
-    st.stop()
+# ---------- Считаем метрики по всем участкам ----------
+cf = float(prices.get("CF_AGB", 0.47))
 
-# ---------- Сайдбар ----------
-st.sidebar.markdown("""
-<div style="text-align:center; padding: 0.5rem 0 1rem 0;">
-    <h2 style="margin: 0.3rem 0 0.2rem 0; color: #1b4332; font-weight: 800;">
-        CarbonVision
-    </h2>
-    <p style="color: #1b4332; font-size: 0.85rem; margin: 0;">
-        Верификация углеродных кредитов<br>
-        <b>Леса России</b>
-    </p>
-</div>
-""", unsafe_allow_html=True)
+rows = []
+total_units = 0
+total_area = 0.0
 
-aoi_options = {row["name"]: row for _, row in locations.iterrows()}
-aoi_name = st.sidebar.selectbox("Локация", list(aoi_options.keys()))
-aoi = aoi_options[aoi_name]
+for _, aoi in locations.iterrows():
+    try:
+        result, err = compute_carbon(baseline, aoi["aoi_id"], 2019, 2024, cf)
+        if err:
+            continue
 
-year_start = st.sidebar.slider("Начальный год", 2019, 2023, 2019)
-year_end = st.sidebar.slider("Конечный год", year_start + 1, 2024, 2024)
+        E_project = delta_c_to_co2(result["delta_c"], aoi["area_ha"])
 
-run = st.sidebar.button("🚀 Анализировать", type="primary")
+        base_row = baseline[baseline["aoi_id"] == aoi["aoi_id"]]
+        if base_row.empty:
+            continue
+        g = float(base_row.iloc[0]["g_tC_ha_yr"])
+        base_start = float(base_row.iloc[0]["baseline_2019_tC_ha"])
+        base_end = base_start + g * 5
+        E_baseline = -((base_end - base_start) * aoi["area_ha"] * (44 / 12))
 
-# ---------- Красивая шапка ----------
-st.markdown("""
-<div class="hero-banner fade-in">
-    <h1>🌍 CarbonVision</h1>
-    <p>Верификация «зелёных» инвестиций и углеродных кредитов в лесах России</p>
-    <div style="margin-top: 0.8rem;">
-        <span class="badge">🛰️ ESA CCI Biomass</span>
-        <span class="badge">🌲 Sentinel-2</span>
-        <span class="badge">🔥 MODIS</span>
-        <span class="badge">🌳 GFC</span>
+        unc = scenario_uncertainty(E_project)
+
+        LK = float(prices.get("LK", 0))
+        credits = compute_credits(E_project, E_baseline, LK, unc["H"])
+
+        Q = credits.get("Q", 0)
+        total_units += Q
+        total_area += float(aoi["area_ha"])
+
+        rows.append({
+            "Участок": aoi["aoi_id"],
+            "Регион": aoi["region"],
+            "Площадь, га": round(float(aoi["area_ha"]), 2),
+            "Запас 2019, т C/га": round(result["c_start"], 2),
+            "Запас 2024, т C/га": round(result["c_end"], 2),
+            "ΔC, т C": round(result["delta_c"] * aoi["area_ha"], 0),
+            "CO₂-экв., т": round(E_project, 0),
+            "Единицы (Q)": Q,
+        })
+    except Exception as e:
+        st.warning(f"Ошибка на участке {aoi.get('aoi_id', '?')}: {e}")
+        continue
+
+# ---------- Шапка ----------
+st.markdown(f"""
+<div class="hero-section">
+    <div class="hero-top">
+        <span class="hero-logo">🌱 Углеродные единицы</span>
+        <span class="hero-nav">
+            <a href="#map">Карта</a>
+            <a href="#metrics">Метрики</a>
+            <a href="#about">О проекте</a>
+        </span>
+    </div>
+    <div class="hero-body">
+        <h1>Найдите, где купить, держать или создать свою углеродную ферму</h1>
+        <p>Спутниковая верификация «зелёных» инвестиций по данным ESA CCI Biomass, Sentinel-2, GFC и MODIS</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">{len(locations)}</div>
+                <div class="hero-stat-label">Участка</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{int(total_area):,}</div>
+                <div class="hero-stat-label">Гектаров</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{total_units:,}</div>
+                <div class="hero-stat-label">Углеродный единиц</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{total_units * 1500:,} ₽</div>
+                <div class="hero-stat-label">Рублей потенциала</div>
+            </div>
+        </div>
     </div>
 </div>
+""".replace(",", " "), unsafe_allow_html=True)
 
-<div style="text-align: center; margin-bottom: 1.5rem;">
-    <div class="status-bar">
-        <span class="status-dot"></span>
-        Система активна • Данные по лесам России загружены
-    </div>
-</div>
-""", unsafe_allow_html=True)
+# ---------- Карта ----------
+st.markdown('<div id="map"></div>', unsafe_allow_html=True)
+st.markdown("### 🗺️ Карта участков")
 
-st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+selected_name = st.selectbox(
+    "Выберите участок",
+    options=locations["name"].tolist(),
+    index=0,
+)
+selected = locations[locations["name"] == selected_name].iloc[0]
 
-# ---------- Карта + инфо ----------
-col1, col2 = st.columns([1.5, 1])
+render_map(
+    float(selected["lat"]),
+    float(selected["lon"]),
+    selected["name"],
+    float(selected["area_ha"]),
+)
+
+# ---------- 3 метрики ----------
+st.markdown('<div id="metrics"></div>', unsafe_allow_html=True)
+st.markdown("### Три метрики для инвестора")
+
+col1, col2, col3 = st.columns(3)
+
 with col1:
     st.markdown("""
-    <div class="section-title">
-        <span class="icon">🗺️</span>
-        <span>Карта участка</span>
+    <div class="metric-card metric-buy">
+        <div class="metric-icon">🛒</div>
+        <h3>Покупать</h3>
+        <p>Для промышленных предприятий, которые хотят минимизировать экологические последствия своей деятельности</p>
+        <div class="metric-value">0 ед.</div>
     </div>
     """, unsafe_allow_html=True)
-    render_map(aoi["lat"], aoi["lon"], aoi["name"], aoi["area_ha"])
+
 with col2:
     st.markdown("""
-    <div class="section-title">
-        <span class="icon">ℹ️</span>
-        <span>Информация</span>
+    <div class="metric-card metric-hold">
+        <div class="metric-icon">📦</div>
+        <h3>Держать</h3>
+        <p>Для тех, у кого уже есть лес — заповедники, ООПТ, частные владельцы. Заработок без вырубок</p>
+        <div class="metric-value">0 ед.</div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"""
-    <div class="info-card fade-in">
-        <p class="label">🌍 Регион</p>
-        <p class="value">{aoi['region']}</p>
-    </div>
-
-    <div class="info-card fade-in">
-        <p class="label">📐 Площадь участка</p>
-        <p class="value">{aoi['area_ha']} га</p>
-    </div>
-
-    <div class="info-card fade-in">
-        <p class="label">📅 Период анализа</p>
-        <p class="value">{year_start} – {year_end}</p>
-    </div>
-
-    <div class="info-card fade-in">
-        <p class="label">🆔 Идентификатор</p>
-        <p class="value">{aoi['aoi_id']}</p>
+with col3:
+    st.markdown("""
+    <div class="metric-card metric-create">
+        <div class="metric-icon">🌳</div>
+        <h3>Создать ферму</h3>
+        <p>Подобрать место с бесхозным лесом или выращивать свой собственный лес</p>
+        <div class="metric-value">0 ед.</div>
     </div>
     """, unsafe_allow_html=True)
 
-# ---------- Расчёт ----------
-if run:
-    if aoi["area_ha"] <= 0:
-        st.error("Площадь должна быть больше 0")
-        st.stop()
-    if year_end <= year_start:
-        st.error("Конечный год должен быть больше начального")
-        st.stop()
+# ---------- Таблица ----------
+st.markdown("### Детальные данные по участкам")
 
-    cf = float(prices.get("CF_AGB", 0.47))
+if rows:
+    df_table = pd.DataFrame(rows)
+    st.dataframe(df_table, use_container_width=True, hide_index=True)
+else:
+    st.info("Нет данных для отображения")
 
-    result, err = compute_carbon(biomass, aoi["aoi_id"],
-                                 year_start, year_end, cf)
-    if err:
-        st.warning(f"⚠️ {err}")
-        st.info("Попробуйте выбрать другой период или локацию.")
-        st.stop()
+# ---------- Расчёт для выбранного ----------
+result, err = compute_carbon(baseline, selected["aoi_id"], 2019, 2024, cf)
+if err:
+    st.warning(f"⚠️ {err}")
+else:
+    E_project = delta_c_to_co2(result["delta_c"], selected["area_ha"])
 
-    E_project = delta_c_to_co2(result["delta_c"], aoi["area_ha"])
-
-    base_row = baseline[baseline["aoi_id"] == aoi["aoi_id"]]
-    if base_row.empty:
-        st.warning("Для этой локации нет базовой линии")
-        st.stop()
-
+    base_row = baseline[baseline["aoi_id"] == selected["aoi_id"]]
     g = float(base_row.iloc[0]["g_tC_ha_yr"])
     base_start = float(base_row.iloc[0]["baseline_2019_tC_ha"])
-    base_end = base_start + g * (year_end - year_start)
-    E_baseline = -((base_end - base_start) * aoi["area_ha"] * (44 / 12))
+    base_end = base_start + g * 5
+    E_baseline = -((base_end - base_start) * selected["area_ha"] * (44 / 12))
 
     unc = scenario_uncertainty(E_project)
-
     LK = float(prices.get("LK", 0))
     credits = compute_credits(E_project, E_baseline, LK, unc["H"])
 
-    # ---------- Результаты ----------
-    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div class="section-title">
-        <span class="icon">📊</span>
-        <span>Результаты анализа</span>
-    </div>
-    """, unsafe_allow_html=True)
-
+    st.markdown(f"### 📊 {selected['name']}")
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("🌱 Запас (начало)", f"{result['c_start']:.2f} т C/га")
-    c2.metric("🌳 Запас (конец)", f"{result['c_end']:.2f} т C/га")
-    c3.metric("📈 Δ Углерод", f"{result['delta_c']:+.2f} т C/га")
-    c4.metric("💨 E (проект)", f"{E_project:+,.0f} т CO₂-экв".replace(",", " "))
+    c1.metric("Запас 2019", f"{result['c_start']:.2f} т C/га")
+    c2.metric("Запас 2024", f"{result['c_end']:.2f} т C/га")
+    c3.metric("Δ углерода", f"{result['delta_c']:+.2f} т C/га")
+    c4.metric("E (проект)", f"{E_project:+,.0f} т CO₂-экв".replace(",", " "))
 
-    st.plotly_chart(biomass_chart(result["series"], aoi_name),
+    st.plotly_chart(biomass_chart(result["series"], selected["name"]),
                     use_container_width=True)
 
-    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+    st.markdown("### 🌱 Потенциальные углеродные единицы")
+    st.metric("Q (единиц)", f"{credits.get('Q', 0):,}".replace(",", " "))
+    st.caption(f"Статус: {credits.get('status', '—')}")
+
+    st.markdown("---")
+    render_money(credits.get("Q", 0), prices)
+
+# ---------- О проекте ----------
+st.markdown('<div id="about"></div>', unsafe_allow_html=True)
+st.markdown("### О проекте")
+
+a1, a2 = st.columns(2)
+with a1:
     st.markdown("""
-    <div class="section-title">
-        <span class="icon">📉</span>
-        <span>Неопределённость и базовая линия</span>
+    <div class="about-card">
+        <div class="about-icon">📖</div>
+        <h4>Научная основа</h4>
+        <p>Расчёт по методике МГЭИК (IPCC 2006), коэффициент CF = 0.47, метод разности запасов (stock-difference)</p>
+    </div>
+    <div class="about-card">
+        <div class="about-icon">📊</div>
+        <h4>Точность</h4>
+        <p>Учёт неопределённости, вычет 10%, резерв 15%, округление вниз</p>
     </div>
     """, unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns(3)
-    c1.metric("📏 Границы E",
-              f"[{unc['L']:,.0f} ; {unc['U']:,.0f}]".replace(",", " "))
-    c2.metric("🎯 E базовой линии",
-              f"{E_baseline:+,.0f} т CO₂-экв".replace(",", " "))
-    c3.metric("⚖️ H/R",
-              f"{credits.get('H/R', 0):.2f}" if 'H/R' in credits else "—")
-
-    # ---------- Потенциальные единицы ----------
-    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+with a2:
     st.markdown("""
-    <div class="section-title">
-        <span class="icon">🌱</span>
-        <span>Потенциальные углеродные единицы</span>
+    <div class="about-card">
+        <div class="about-icon">🛰️</div>
+        <h4>Данные</h4>
+        <p>ESA CCI Biomass v7.0, Sentinel-2 L2A, Hansen GFC 2025 v1.13, MODIS MCD64A1 v6.1</p>
+    </div>
+    <div class="about-card">
+        <div class="about-icon">💡</div>
+        <h4>Дополнительно</h4>
+        <p>Рекреационный потенциал, объединение с экотуризмом для дополнительной прибыли</p>
     </div>
     """, unsafe_allow_html=True)
 
-    c1, c2 = st.columns([1, 2])
-    with c1:
-        st.metric("Q (единиц)", f"{credits['Q']:,}".replace(",", " "))
-    with c2:
-        status_color = "#52b788" if credits['Q'] > 0 else "#ffd166"
-        st.markdown(f"""
-        <div class="info-card">
-            <p class="label">Статус расчёта</p>
-            <p class="value" style="color: {status_color};">
-                {credits['status']}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-    if credits["Q"] > 0:
-        with st.expander("🔍 Детали расчёта"):
-            st.json({k: (round(v, 3) if isinstance(v, float) else v)
-                     for k, v in credits.items()})
-
-    # ---------- ДЕНЬГИ ----------
-    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
-    render_money(credits["Q"], prices)
-
-    # ---------- События ----------
-    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div class="section-title">
-        <span class="icon">🔥</span>
-        <span>События на участке</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    ev = events[events["aoi_id"] == aoi["aoi_id"]]
-    if ev.empty:
-        st.info("🌿 На этом участке событий не зафиксировано")
-    else:
-        st.dataframe(ev, use_container_width=True, hide_index=True)
-
-    # ---------- Скачать отчёт ----------
-    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div class="section-title">
-        <span class="icon">📥</span>
-        <span>Экспорт отчёта</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    report = pd.DataFrame([{
-        "aoi_id": aoi["aoi_id"],
-        "name": aoi["name"],
-        "period": f"{year_start}-{year_end}",
-        "area_ha": aoi["area_ha"],
-        "E_project": round(E_project, 2),
-        "E_baseline": round(E_baseline, 2),
-        "Q": credits["Q"],
-        "revenue_low": credits["Q"] * float(prices["price_low"]),
-        "revenue_mid": credits["Q"] * float(prices["price_mid"]),
-        "revenue_high": credits["Q"] * float(prices["price_high"]),
-    }])
-    st.download_button("📥 Скачать отчёт (CSV)",
-                       report.to_csv(index=False).encode("utf-8-sig"),
-                       file_name=f"report_{aoi['aoi_id']}.csv",
-                       mime="text/csv")
-else:
-    st.info("👈 Выберите параметры слева и нажмите **Анализировать**")
+# ---------- Футер ----------
+st.markdown("""
+<div class="footer-note">
+    Космохакатон 2026 • Кейс SR Data • Верификация углеродных кредитов<br>
+    <small>Данные носят сценарный характер. Не являются сертифицированными углеродными единицами.</small>
+</div>
+""", unsafe_allow_html=True)
